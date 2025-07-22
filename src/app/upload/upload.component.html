@@ -1,0 +1,40 @@
+<div class="upload-container">
+  <input type="file" multiple (change)="onFileSelect($event)" #fileInput>
+  <button (click)="fileInput.click()">Select Files</button>
+  <button (click)="startUpload()" [disabled]="files.length === 0">Upload All</button>
+
+  <div *ngIf="files.length > 0" class="stats">
+    <p>Total files: {{files.length}} |
+      Completed: {{completedFiles.length}} |
+      Failed: {{failedFiles.length}} |
+      In Progress: {{inProgressFiles.length}}
+    </p>
+  </div>
+
+  <div class="file-list">
+    <div *ngFor="let status of uploadStatuses" class="file-item">
+      <div class="file-info">
+        {{status.fileName}} ({{ getFileSize(status.fileName) | number:'1.0-0' }} bytes)
+      </div>
+      <div class="progress-container">
+        <progress [value]="status.progress" max="100"></progress>
+        <span class="status {{status.status}}">
+          {{status.progress}}% - {{status.status | uppercase}}
+        </span>
+        <span *ngIf="status.error" class="error">
+          {{status.error}}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Failed Files Section -->
+  <div *ngIf="failedFiles.length > 0" class="failed-section">
+    <h3>Failed Uploads</h3>
+    <ul>
+      <li *ngFor="let status of failedFiles">
+        {{status.fileName}} - {{status.error}}
+      </li>
+    </ul>
+  </div>
+</div>
